@@ -30,6 +30,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
      */
     private function __construct() {
         add_action( 'admin_init', array($this, 'check_dependencies') );
+        add_filter('wc_get_template', array($this, 'wc_get_template'), 10, 5);
     }
 
     /**
@@ -73,6 +74,26 @@ final class Carbon_Breadcrumbs_WooCommerce {
         ?>
         <div class="error"><p><?php _e('Sorry, but Carbon Breadcrumbs - WooCoomerce requires the Carbon Breadcrumbs and WooCommerce plugins to be installed and active.', 'crb'); ?></p></div>
         <?php
+    }
+
+    /**
+     * Modify the default breadcrumbs template of WooCommerce
+     *
+     * @static
+     * @access public
+     *
+     * @param string $located The original template path.
+     * @param string $template_name The original template name.
+     * @param array $args The args that the breadcrumbs function was called with.
+     * @param string $template_path Path to templates.
+     * @param string $default_path The default path to templates.
+     * @return $string $located
+     */
+    function wc_get_template($located, $template_name, $args, $template_path = '', $default_path = '') {
+        if ($template_name == 'global/breadcrumb.php') {
+            $located = dirname(__FILE__) . '/breadcrumbs-template.php';
+        }
+        return $located;
     }
 
 }
