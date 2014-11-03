@@ -31,7 +31,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
     private function __construct() {
         add_action( 'admin_init', array($this, 'check_dependencies') );
         add_filter('wc_get_template', array($this, 'wc_get_template'), 10, 5);
-        add_action('carbon_breadcrumb_after_setup_trail', array($this, 'setup'), 100);
+        add_action('carbon_breadcrumbs_after_setup_trail', array($this, 'setup'), 100);
     }
 
     /**
@@ -107,6 +107,9 @@ final class Carbon_Breadcrumbs_WooCommerce {
      */
     function setup($trail) {
 
+        // starting setup
+        do_action('carbon_breadcrumbs_woocommerce_before_setup_trail', $trail);
+
         // get the current items
         $items = $trail->get_items();
 
@@ -146,6 +149,9 @@ final class Carbon_Breadcrumbs_WooCommerce {
                 $trail->add_custom_item($shop_title, $shop_link, 500);
             }
         }
+
+        // completing setup
+        do_action('carbon_breadcrumbs_woocommerce_after_setup_trail', $trail);
 
     }
 
