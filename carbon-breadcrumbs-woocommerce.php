@@ -138,7 +138,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
         }
 
         // add product main page
-        if (is_woocommerce()) {
+        if ( is_woocommerce() || is_cart() || is_checkout() ) {
             $shop_page_id = woocommerce_get_page_id( 'shop' );
             if ($shop_page_id) {
                 $shop_title = get_the_title($shop_page_id);
