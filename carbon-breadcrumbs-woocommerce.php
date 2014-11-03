@@ -92,7 +92,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
      */
     function wc_get_template($located, $template_name, $args, $template_path = '', $default_path = '') {
         if ($template_name == 'global/breadcrumb.php') {
-            $located = dirname(__FILE__) . '/breadcrumbs-template.php';
+            $located = dirname(__FILE__) . '/templates/breadcrumbs-template.php';
         }
         return $located;
     }
