@@ -55,7 +55,21 @@ final class Carbon_Breadcrumbs_WooCommerce {
      * @access public
      */
     function check_dependencies() {
-        if ( is_admin() && current_user_can( 'activate_plugins' ) &&  !is_plugin_active( 'carbon-breadcrumbs/carbon-breadcrumbs.php' ) ) {
+        // must be in the admin to perform the check
+        $is_admin = is_admin();
+
+        // current user must be able to activate plugins
+        $has_caps = current_user_can( 'activate_plugins' ); 
+
+        // the Carbon Breadcrumbs plugin must be active
+        $cb_active = is_plugin_active( 'carbon-breadcrumbs/carbon-breadcrumbs.php' );
+
+        // the WooCommerce plugin must be active
+        $woo_active = is_plugin_active( 'woocommerce/woocommerce.php' );
+
+        // if any of the required plugins is not activated, 
+        // display a notice and deactivate the plugin
+        if ( $is_admin && $has_caps && !( $cb_active && $woo_active ) ) {
             add_action( 'admin_notices', array($this, 'plugin_notice') );
 
             deactivate_plugins( plugin_basename( __FILE__ ) ); 
@@ -106,6 +120,10 @@ final class Carbon_Breadcrumbs_WooCommerce {
      * @param Carbon_Breadcrumb_Trail $trail The breadcrumb trail.
      */
     function setup($trail) {
+        // skip if the WooCommerce plugin is not activated
+        if ( !class_exists('WooCommerce') ) {
+            return;
+        }
 
         // starting setup
         do_action('carbon_breadcrumbs_woocommerce_before_setup_trail', $trail);
