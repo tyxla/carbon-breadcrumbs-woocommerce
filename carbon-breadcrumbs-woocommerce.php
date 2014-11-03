@@ -6,11 +6,6 @@
  * License: GPL2
  */
 
-// allows the plugin to be included as a library in themes
-if (class_exists('Carbon_Breadcrumbs_WooCommerce')) {
-    return;
-}
-
 /**
  * The main Carbon Breadcrumbs - WooCommerce plugin class.
  *
@@ -139,6 +134,16 @@ final class Carbon_Breadcrumbs_WooCommerce {
             $new_items = $locator->get_items(700, $last_category->term_id);
             if ($new_items) {
                 $trail->add_item($new_items);
+            }
+        }
+
+        // add product main page
+        if (is_woocommerce()) {
+            $shop_page_id = woocommerce_get_page_id( 'shop' );
+            if ($shop_page_id) {
+                $shop_title = get_the_title($shop_page_id);
+                $shop_link = get_permalink($shop_page_id);
+                $trail->add_custom_item($shop_title, $shop_link, 500);
             }
         }
 
