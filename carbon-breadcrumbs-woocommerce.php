@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Carbon Breadcrumbs - WooCommerce
- * Description: A WooCommerce addon for Carbon Breadcrumbs.
+ * Description: A WooCommerce addon for Carbon Breadcrumbs. Requires the Woocommerce and Carbon Breadcrumbs plugins to be installed and active.
  * Version: 1.0
  * License: GPL2
  */
