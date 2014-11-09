@@ -16,10 +16,11 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 * Instance container.
 	 *
 	 * @static
+	 * @access private
 	 *
 	 * @var Carbon_Breadcrumbs_WooCommerce
 	 */
-	static $instance = null;
+	private static $instance = null;
 
 	/**
 	 * Constructor.
@@ -42,7 +43,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 *
 	 * @return Carbon_Breadcrumbs_WooCommerce $instance
 	 */
-	static function get_instance() {
+	public static function get_instance() {
 		if (self::$instance === null) {
 			self::$instance = new self();
 		}
@@ -54,7 +55,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 *
 	 * @access public
 	 */
-	function check_dependencies() {
+	public function check_dependencies() {
 		// must be in the admin to perform the check
 		$is_admin = is_admin();
 
@@ -85,7 +86,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 *
 	 * @access public
 	 */
-	function plugin_notice() {
+	public function plugin_notice() {
 		?>
 		<div class="error"><p><?php _e('Sorry, but Carbon Breadcrumbs - WooCoomerce requires the Carbon Breadcrumbs and WooCommerce plugins to be installed and active.', 'crb'); ?></p></div>
 		<?php
@@ -104,7 +105,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 * @param string $default_path The default path to templates.
 	 * @return $string $located
 	 */
-	function wc_get_template($located, $template_name, $args, $template_path = '', $default_path = '') {
+	public function wc_get_template($located, $template_name, $args, $template_path = '', $default_path = '') {
 		if ($template_name == 'global/breadcrumb.php') {
 			$located = dirname(__FILE__) . '/templates/breadcrumbs-template.php';
 		}
@@ -119,7 +120,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 *
 	 * @param Carbon_Breadcrumb_Trail $trail The breadcrumb trail.
 	 */
-	function setup($trail) {
+	public function setup($trail) {
 		// skip if the WooCommerce plugin is not activated
 		if ( !class_exists('WooCommerce') ) {
 			return;
