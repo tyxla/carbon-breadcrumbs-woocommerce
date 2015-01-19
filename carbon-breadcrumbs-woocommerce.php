@@ -105,7 +105,7 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 * @param array $args The args that the breadcrumbs function was called with.
 	 * @param string $template_path Path to templates.
 	 * @param string $default_path The default path to templates.
-	 * @return $string $located
+	 * @return $string $located The new template path.
 	 */
 	public function wc_get_template($located, $template_name, $args, $template_path = '', $default_path = '') {
 		if ($template_name == 'global/breadcrumb.php') {
