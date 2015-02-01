@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Carbon Breadcrumbs - WooCommerce
- * Description: A WooCommerce addon for Carbon Breadcrumbs. Requires the Woocommerce and Carbon Breadcrumbs plugins to be installed and active.
+ * Description: A WooCommerce addon for Carbon Breadcrumbs. Requires the Woocommerce and Carbon Breadcrumbs plugins.
  * Version: 1.0
  * Author: tyxla
  * Author URI: https://github.com/tyxla
@@ -32,7 +32,6 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 * @access private
 	 */
 	private function __construct() {
-		add_action( 'admin_init', array($this, 'check_dependencies') );
 		add_filter('wc_get_template', array($this, 'wc_get_template'), 10, 5);
 		add_action('carbon_breadcrumbs_after_setup_trail', array($this, 'setup'), 100);
 	}
@@ -50,48 +49,6 @@ final class Carbon_Breadcrumbs_WooCommerce {
 			self::$instance = new self();
 		}
 		return self::$instance;
-	}
-
-	/**
-	 * Check for the plugin dependencies and deactivate if they are not present.
-	 *
-	 * @access public
-	 */
-	public function check_dependencies() {
-		// must be in the admin to perform the check
-		$is_admin = is_admin();
-
-		// current user must be able to activate plugins
-		$has_caps = current_user_can( 'activate_plugins' ); 
-
-		// the Carbon Breadcrumbs plugin must be active
-		$cb_active = is_plugin_active( 'carbon-breadcrumbs/carbon-breadcrumbs.php' );
-
-		// the WooCommerce plugin must be active
-		$woo_active = is_plugin_active( 'woocommerce/woocommerce.php' );
-
-		// if any of the required plugins is not activated, 
-		// display a notice and deactivate the plugin
-		if ( $is_admin && $has_caps && !( $cb_active && $woo_active ) ) {
-			add_action( 'admin_notices', array($this, 'plugin_notice') );
-
-			deactivate_plugins( plugin_basename( __FILE__ ) ); 
-
-			if ( isset( $_GET['activate'] ) ) {
-				unset( $_GET['activate'] );
-			}
-		}
-	}
-
-	/**
-	 * The notice that we display when the dependencies are not present.
-	 *
-	 * @access public
-	 */
-	public function plugin_notice() {
-		?>
-		<div class="error"><p><?php _e('Sorry, but Carbon Breadcrumbs - WooCoomerce requires the Carbon Breadcrumbs and WooCommerce plugins to be installed and active.', 'crb'); ?></p></div>
-		<?php
 	}
 
 	/**
