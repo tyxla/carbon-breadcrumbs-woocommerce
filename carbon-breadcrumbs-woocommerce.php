@@ -32,7 +32,30 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 * @access private
 	 */
 	private function __construct() {
+		// initialize the plugin
+		add_action('init', array($this, 'init'));
+	}
+
+	/**
+	 * Initialize the plugin and its features.
+	 *
+	 * @access public
+	 */
+	public function init() {
+		// skip if the Carbon Breadcrumbs main class does not exist
+		if ( !class_exists('Carbon_Breadcrumbs') ) {
+			return;
+		}
+
+		// skip if the WooCommerce plugin is not activated
+		if ( !class_exists('WooCommerce') ) {
+			return;
+		}
+
+		// modify the WooCommerce breadcrumbs template
 		add_filter('wc_get_template', array($this, 'wc_get_template'), 10, 5);
+
+		// add custom WooCommerce-related breadcrumb items
 		add_action('carbon_breadcrumbs_after_setup_trail', array($this, 'setup'), 100);
 	}
 
@@ -79,10 +102,6 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 * @param Carbon_Breadcrumb_Trail $trail The breadcrumb trail.
 	 */
 	public function setup($trail) {
-		// skip if the WooCommerce plugin is not activated
-		if ( !class_exists('WooCommerce') ) {
-			return;
-		}
 
 		// starting setup
 		do_action('carbon_breadcrumbs_woocommerce_before_setup_trail', $trail);
