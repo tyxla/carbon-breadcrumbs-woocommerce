@@ -32,32 +32,41 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	 * @access private
 	 */
 	private function __construct() {
-		// initialize the plugin
-		add_action('init', array($this, 'init'));
+		$dir = dirname(__FILE__);
+		
+		// include files
+		include_once($dir . '/includes/Carbon_Breadcrumb_Woocommerce_Trail.php');
+		include_once($dir . '/includes/Carbon_Breadcrumb_Woocommerce_Template.php');
+
+		// initialize trail functionality
+		$trail = new Carbon_Breadcrumb_Woocommerce_Trail();
+
+		// initialize template functionality
+		$template = new Carbon_Breadcrumb_Woocommerce_Template();
 	}
 
 	/**
-	 * Initialize the plugin and its features.
+	 * Whether the WooCommerce functionality should be enabled.
 	 *
 	 * @access public
+	 *
+	 * @return bool $is_enabled True if the WooCommerce functionality should be enabled.
 	 */
-	public function init() {
-		// skip if the Carbon Breadcrumbs main class does not exist
+	public function is_enabled() {
+		// the Carbon Breadcrumbs main class should exist
 		if ( !class_exists('Carbon_Breadcrumbs') ) {
-			return;
+			return false;
 		}
 
-		// skip if the WooCommerce plugin is not activated
+		// the WooCommerce plugin main class should exist
 		if ( !class_exists('WooCommerce') ) {
-			return;
+			return false;
 		}
 
-		// modify the WooCommerce breadcrumbs template
-		add_filter('wc_get_template', array($this, 'wc_get_template'), 10, 5);
-
-		// add custom WooCommerce-related breadcrumb items
-		add_action('carbon_breadcrumbs_after_setup_trail', array($this, 'setup'), 100);
+		// everything is included
+		return true;
 	}
+
 
 	/**
 	 * Retrieve or create the Carbon_Breadcrumbs_WooCommerce instance.
@@ -72,83 +81,6 @@ final class Carbon_Breadcrumbs_WooCommerce {
 			self::$instance = new self();
 		}
 		return self::$instance;
-	}
-
-	/**
-	 * Modify the default breadcrumbs template of WooCommerce
-	 *
-	 * @static
-	 * @access public
-	 *
-	 * @param string $located The original template path.
-	 * @param string $template_name The original template name.
-	 * @param array $args The args that the breadcrumbs function was called with.
-	 * @param string $template_path Path to templates.
-	 * @param string $default_path The default path to templates.
-	 * @return $string $located The new template path.
-	 */
-	public function wc_get_template($located, $template_name, $args, $template_path = '', $default_path = '') {
-		if ($template_name == 'global/breadcrumb.php') {
-			$located = dirname(__FILE__) . '/templates/breadcrumbs-template.php';
-		}
-		return $located;
-	}
-
-	/**
-	 * Modify the trail by adding custom WooCommerce-related breadcrumb items.
-	 *
-	 * @access public
-	 *
-	 * @param Carbon_Breadcrumb_Trail $trail The breadcrumb trail.
-	 */
-	public function setup($trail) {
-
-		// starting setup
-		do_action('carbon_breadcrumbs_woocommerce_before_setup_trail', $trail);
-
-		// get the current items
-		$items = $trail->get_items();
-
-		// remove page for posts on WooCommerce pages
-		if ( is_woocommerce() && $page_for_posts = get_option('page_for_posts') ) {
-			$page_for_posts_url = get_permalink($page_for_posts);
-			foreach ($items as $priority => &$priority_items) {
-				foreach ($priority_items as $priority_item_key => $priority_item) {
-					if ($priority_item->get_link() == $page_for_posts_url) {
-						unset($priority_items[$priority_item_key]);
-					}
-				}
-			}
-		}
-
-		// update the items
-		$trail->set_items($items);
-
-		// add product category hierarchy to single products
-		if (is_single() && get_post_type() == 'product') {
-			$taxonomy = 'product_cat';
-			$categories = wp_get_object_terms(get_the_ID(), $taxonomy, 'orderby=term_id');
-			$last_category = array_pop($categories);
-			$locator = Carbon_Breadcrumb_Locator::factory('term', $taxonomy);
-			$new_items = $locator->get_items(700, $last_category->term_id);
-			if ($new_items) {
-				$trail->add_item($new_items);
-			}
-		}
-
-		// add product main page
-		if ( is_woocommerce() || is_cart() || is_checkout() ) {
-			$shop_page_id = woocommerce_get_page_id( 'shop' );
-			if ($shop_page_id) {
-				$shop_title = get_the_title($shop_page_id);
-				$shop_link = get_permalink($shop_page_id);
-				$trail->add_custom_item($shop_title, $shop_link, 500);
-			}
-		}
-
-		// completing setup
-		do_action('carbon_breadcrumbs_woocommerce_after_setup_trail', $trail);
-
 	}
 
 	/**
