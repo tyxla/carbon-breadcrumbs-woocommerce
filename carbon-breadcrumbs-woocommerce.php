@@ -117,7 +117,6 @@ final class Carbon_Breadcrumbs_WooCommerce {
 	/**
 	 * Modify the trail by adding custom WooCommerce-related breadcrumb items.
 	 *
-	 * @static
 	 * @access public
 	 *
 	 * @param Carbon_Breadcrumb_Trail $trail The breadcrumb trail.
@@ -175,6 +174,20 @@ final class Carbon_Breadcrumbs_WooCommerce {
 		do_action('carbon_breadcrumbs_woocommerce_after_setup_trail', $trail);
 
 	}
+
+	/**
+	 * Private __clone() to prevent cloning the singleton instance.
+	 *
+	 * @access private
+	 */
+	private function __clone() {}
+
+	/**
+	 * Private __wakeup() to prevent singleton instance unserialization.
+	 *
+	 * @access private
+	 */
+	private function __wakeup() {}
 
 }
 
