@@ -8,6 +8,11 @@
  * License: GPL2
  */
 
+// allows the plugin to be included as a library in themes
+if (class_exists('Carbon_Breadcrumb_Woocommerce_Trail')) {
+	return;
+}
+
 /**
  * The main Carbon Breadcrumbs - WooCommerce plugin class.
  *
