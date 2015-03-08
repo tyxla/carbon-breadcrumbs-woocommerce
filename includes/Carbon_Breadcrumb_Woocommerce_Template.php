@@ -35,7 +35,6 @@ class Carbon_Breadcrumb_Woocommerce_Template {
 	/**
 	 * Modify the default breadcrumbs template of WooCommerce
 	 *
-	 * @static
 	 * @access public
 	 *
 	 * @param string $located The original template path.
